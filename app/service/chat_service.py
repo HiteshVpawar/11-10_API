@@ -1,18 +1,56 @@
 import time
 import openai
 from app import mongo_db
-
-
+import multiprocessing
 
 # def chat_service(question):
-#     openai.api_base = "http://localhost:1234/v1"
+#     inputValue = question
+#     for x in intents:
+#         if inputValue in x['patterns'] :
+#             return x['responses'][0]
+
+
+def chat_service(question):
+    openai.api_base = "http://localhost:12345/v1"
+    openai.api_key = ""
+    completion = openai.ChatCompletion.create(
+      model="local-model",
+      messages=[
+        {"role": "system", "content": "Always answer in rhymes."},
+        {"role": "user", "content": question}
+      ]
+    )
+    obj = completion.choices[0].message['content']
+    print(obj)
+    return obj
+
+
+
+
+# def chat_service(question, user_id):
+#     openai.api_base = "http://localhost:12345/v1"
 #     openai.api_key = ""
-#     completion = openai.ChatCompletion.create(
-#       model="local-model",
-#       messages=[
-#         {"role": "system", "content": "Always answer in rhymes."},
+#     prev_data = mongo_db.chats.find({'user_id':user_id})
+#     greetings = ["Hi", "Hii", "Hiii","Hello","hello","hi","hii","hiii"]
+#     prev_list = []
+#     for i in prev_data:
+#         prev_list.append(i)
+#     messages = [
+#         {"role": "system", "content": prev_list[-1]['answer']},
 #         {"role": "user", "content": question}
 #       ]
+#     for i in greetings:
+#         if question == i:
+#             print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+#             print("My Call Has been detected")
+#             print(f"Question is `{question}` and detection is `{i}`")
+#             print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+#             messages=[
+#         {"role": "user", "content": question}
+#       ]
+#     completion = openai.ChatCompletion.create(
+#       model="local-model",
+#       messages=messages
 #     )
 #     obj = completion.choices[0].message['content']
 #     print(obj)
@@ -385,12 +423,6 @@ intents = [
 
 
 
-
-def chat_service(question):
-    inputValue = question
-    for x in intents:
-        if inputValue in x['patterns'] :
-            return x['responses'][0]
 
 # def chat_service(question):
 #     inputValue = question

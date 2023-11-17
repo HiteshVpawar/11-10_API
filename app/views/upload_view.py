@@ -4,7 +4,6 @@ from app.controllers.upload_Controller import UploadController
 from PyPDF2 import PdfReader
 import fitz  # PyMuPDF
 from PIL import Image
-import pytesseract
 import fitz  # PyMuPDF]
 import base64
 import requests
@@ -14,12 +13,18 @@ upload_controller = UploadController()  # Pass mongo_db object during instantiat
 import pytesseract as tess 
 from PIL import Image 
 tess.pytesseract.tesseract_cmd=r'C:\Users\Hitesh.Pawar\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
+import pandas as pd
 
-
+# EXCEL_FILE_PATH = 'data.xlsx'
+# EXCEL_SHEET_NAME = 'Sheet1'
 
 class UploadView:
+
+  
+
     def __init__(self, upload_controller):
         self.upload_controller = upload_controller
+        self.df = pd.DataFrame()
   
     def extract_text_from_pdf(self, pdf_file):
         try:
@@ -52,3 +57,30 @@ class UploadView:
                 return {'_id': response, 'data': image_text}
         except Exception as e:
             return str(e)
+        
+             
+    # def upload_to_excel(self,excel_file):
+    #     try:
+    #         df = pd.read_excel(excel_file)
+    #         new_row = pd.Series(excel_file)
+    #         df = df.append(new_row, ignore_index=True)
+    #         df.to_excel(excel_file, index=False)
+    #         return "Data uploaded to Excel successfully"
+    #     except Exception as e:
+    #         return str(e)    
+    # def __init__(self):
+        # Assuming self.df is the DataFrame you'll use for processing
+        
+
+    def upload_to_excel(self, excel_file):
+            try:
+                # Assuming excel_file is the path to your existing Excel file
+                existing_df = pd.read_excel(excel_file)
+
+                # Assuming self.df is the DataFrame you want to append
+                self.df = self.df.append(existing_df, ignore_index=True)
+
+                self.df.to_excel(excel_file, index=False)
+                return "Data uploaded to Excel successfully"
+            except Exception as e:
+                return str(e)

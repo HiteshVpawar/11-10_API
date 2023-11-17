@@ -14,3 +14,4 @@ class ChatView:
     
     def get_chats(self):
         return jsonify(self.chat_controller.get_chats()), 200
+    

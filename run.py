@@ -11,6 +11,7 @@ from app.views.upload_view import UploadView
 from flask_cors import CORS, cross_origin
 import jwt
 from PyPDF2 import PdfReader
+from openpyxl import load_workbook
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -28,6 +29,17 @@ upload_view=UploadView(upload_controller)
 
 # Routes
 
+@app.route('/auth/signup', methods=['POST'])
+def signup():
+        data = request.get_json()
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        confirmPassword = data.get('confirmPassword')
+        return auth_view.Sign_up(username,email,password,confirmPassword)
+    #     return jsonify({"message": "Signup successful"}), 200
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @app.route('/auth/login', methods=['POST'])
 def login():
@@ -109,7 +121,38 @@ def upload_image():
             
             return image_text
         else:
-            return "No file selected"    
+            return "No file selected" 
+           
+@app.route('/upload/to_excel', methods=['POST'])
+def upload_to_excel_endpoint():
+    if request.method == 'POST':
+        excel_file=request.files['excel_file']
+        if excel_file :
+            excel_text=upload_view.upload_to_excel(excel_file)
+        # data = request.get_json()  # Assuming data is sent as JSON
+        # response = upload_view.upload_to_excel(data)
+        return excel_text
+    else :
+        return "no file selected"
+        
+@app.route('/extract_data', methods=['POST'])
+def extract_data():
+    try:
+        excel_file = request.files['excel_file']
+        if excel_file and excel_file.filename.endswith(('.xlsx', '.xls')):
+            workbook = load_workbook(excel_file, read_only=True)
+            sheet = workbook.active
+            data = []
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                data.append(row)
+
+            return jsonify({"data": data})
+        else:
+            return jsonify({"error": "Invalid file format. Please upload an Excel file."})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
