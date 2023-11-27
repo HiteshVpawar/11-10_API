@@ -54,17 +54,17 @@ class UserController:
         users = [User(user['username'], user['email'], "None" , user['_id']) for user in users_list]
         return users
     
-    def update_user(self, user_id, new_username, new_email):
-        # Update user data in the 'users' collection based on user_id
-        result = mongo_db.users.update_one({'_id': ObjectId(user_id)}, {'$set': {'username': new_username, 'email': new_email}})
-        if result.modified_count > 0:
-            updated_user_data = {'_id': user_id, 'username': new_username, 'email': new_email}
-            updated_user = User(new_username, new_email, user_id)
-            return updated_user
-        else:
-            return None  # Return None if user with given user_id was not found
+    # def update_user(self, user_id, new_username, new_email):
+    #     # Update user data in the 'users' collection based on user_id
+    #     result = mongo_db.users.update_one({'_id': ObjectId(user_id)}, {'$set': {'username': new_username, 'email': new_email}})
+        # if result.modified_count > 0:
+        #     updated_user_data = {'_id': user_id, 'username': new_username, 'email': new_email}
+        #     updated_user = User(new_username, new_email, user_id)
+        #     return updated_user
+        # else:
+        #     return None  # Return None if user with given user_id was not found
 
-    def delete_user(self, user_id):
-        # Delete user from the 'users' collection based on user_id
-        result = mongo_db.users.delete_one({'_id': ObjectId(user_id)})
-        return result.deleted_count > 0
+    # def delete_user(self, user_id):
+    #     # Delete user from the 'users' collection based on user_id
+    #     result = mongo_db.users.delete_one({'_id': ObjectId(user_id)})
+    #     return result.deleted_count > 0

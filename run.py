@@ -13,6 +13,8 @@ import jwt
 from PyPDF2 import PdfReader
 from openpyxl import load_workbook
 
+     
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 CORS(app)
@@ -88,13 +90,24 @@ def delete_user():
     user_deleted = user_view.delete_user(user_id)
     return user_deleted
 
-@app.route('/chat', methods=['POST'])
-def chat():
-    return chat_view.chat(request)
+# @app.route('/chat', methods=['POST'])
+# def chat():
+#     return chat_view.chat(request)
 
-@app.route('/chat', methods=['GET'])
-def get_chats():
-    return chat_view.get_chats()
+# @app.route('/chat', methods=['GET'])
+# def get_chats():
+#     return chat_view.get_chats()
+
+
+@app.route('/chat/<user_id>', methods=['POST'])
+def chat(user_id):
+    return chat_view.chat(user_id, request)
+
+
+@app.route('/chat/<user_id>', methods=['GET'])
+def get_chats(user_id):
+    return chat_view.get_chats(user_id)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():

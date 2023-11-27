@@ -10,18 +10,35 @@ import multiprocessing
 #             return x['responses'][0]
 
 
-def chat_service(question):
+# def chat_service(question,user_id):
+#     openai.api_base = "http://localhost:12345/v1"
+#     openai.api_key = ""
+#     completion = openai.ChatCompletion.create(
+#       model="local-model",
+#       messages=[
+#         {"role": "system", "content": "Always answer in rhymes."},
+#         {"role": "user", "content": question}
+#       ]
+#     )
+#     obj = completion.choices[0].message['content']
+#     print(obj)
+#     return obj
+
+def chat_service(user_id, question):
     openai.api_base = "http://localhost:12345/v1"
-    openai.api_key = ""
-    completion = openai.ChatCompletion.create(
-      model="local-model",
-      messages=[
+    openai.api_key = ""  # Replace with your actual API key
+
+    messages = [
         {"role": "system", "content": "Always answer in rhymes."},
-        {"role": "user", "content": question}
-      ]
+        {"role": "user", "content": f"{user_id}: {question}"}  # Include user ID in the message
+    ]
+
+    completion = openai.ChatCompletion.create(
+        model="local-model",
+        messages=messages
     )
+    
     obj = completion.choices[0].message['content']
-    print(obj)
     return obj
 
 

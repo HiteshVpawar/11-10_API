@@ -48,20 +48,34 @@ class AuthController:
 
 
 
-    def login(self, username, password):
-            secret_key = os.environ['TOKEN_SECRET']
-            user_data = mongo_db.userSignup.find_one({'username': username})
+    # def login(self, username, password):
+    #         secret_key = os.environ['TOKEN_SECRET']
+    #         user_data = mongo_db.userSignup.find_one({'username': username})
 
-            if user_data and bcrypt.checkpw(password.encode('utf-8'), user_data['password'].encode('utf-8')):
+    #         if user_data and bcrypt.checkpw(password.encode('utf-8'), user_data['password'].encode('utf-8')):
               
-                token_payload = {
-                    'user_id': str(user_data['_id']),
-                    'username': user_data['username'],
-                }
-                jwt_token = jwt.encode(token_payload, secret_key, algorithm='HS256')
-                return {'token': jwt_token, 'isSuccess': True}, 200  
-            else:
-                return {'message': 'Invalid credentials'}, 401
+    #             token_payload = {
+    #                 'user_id': str(user_data['_id']),
+    #                 'username': user_data['username'],
+    #             }
+    #             jwt_token = jwt.encode(token_payload, secret_key, algorithm='HS256')
+    #             return {'token': jwt_token, 'isSuccess': True}, 200  
+    #         else:
+    #             return {'message': 'Invalid credentials'}, 401
+
+    def login(self, username, password):
+        secret_key = os.environ['TOKEN_SECRET']
+        user_data = mongo_db.userSignup.find_one({'username': username})
+
+        if user_data and bcrypt.checkpw(password.encode('utf-8'), user_data['password'].encode('utf-8')):
+            token_payload = {
+                'user_id': str(user_data['_id']),
+                'username': user_data['username'],
+            }
+            jwt_token = jwt.encode(token_payload, secret_key, algorithm='HS256')
+            return {'token': jwt_token, 'user_id': str(user_data['_id']), 'isSuccess': True}, 200  
+        else:
+            return {'message': 'Invalid credentials'}, 401
     
     def verify_token(self, token):
         secret_key = os.environ['TOKEN_SECRET']

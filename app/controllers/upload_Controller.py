@@ -1,6 +1,5 @@
 from app.models.user import User  # Import the User class
 from app import mongo_db
-from bson import ObjectId
 import bcrypt
 from flask import request, jsonify
 
