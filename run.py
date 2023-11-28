@@ -12,7 +12,10 @@ from flask_cors import CORS, cross_origin
 import jwt
 from PyPDF2 import PdfReader
 from openpyxl import load_workbook
-
+from torchvision import models, transforms
+from PIL import Image
+import requests
+import torch
      
 
 app = Flask(__name__)
@@ -30,6 +33,54 @@ chat_view = ChatView(chat_controller)
 upload_view=UploadView(upload_controller)
 
 # Routes
+
+model = models.resnet50(pretrained=True)
+model.eval()
+
+# Define ImageNet classes
+LABELS_URL = 'https://raw.githubusercontent.com/anishathalye/imagenet-simple-labels/master/imagenet-simple-labels.json'
+LABELS = requests.get(LABELS_URL).json()
+
+# Preprocess the image
+def preprocess_image(image_path):
+    image = Image.open(image_path)
+    preprocess = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    image = preprocess(image).unsqueeze(0)
+    return image
+
+# Predict image class
+def predict_image(image_path):
+    image = preprocess_image(image_path)
+    with torch.no_grad():
+        outputs = model(image)
+    _, predicted = outputs.max(1)
+    predicted_label = LABELS[predicted.item()]
+
+    # Print the prediction result
+    print(f"The predicted label is: {predicted_label}")
+    
+    return predicted_label
+
+# Route for file upload
+@app.route('/image', methods=['GET', 'POST'])
+def image_Data():
+    if request.method == 'POST':
+        file = request.files['file']
+        file_path = 'tiger.jpg'
+        file.save(file_path)
+        prediction = predict_image(file_path)
+        
+        # Print the prediction result
+        print(f"The predicted label is: {prediction}")
+        
+        return prediction
+    return prediction
+
 
 @app.route('/auth/signup', methods=['POST'])
 def signup():
@@ -164,6 +215,7 @@ def extract_data():
             return jsonify({"error": "Invalid file format. Please upload an Excel file."})
     except Exception as e:
         return jsonify({"error": str(e)})
+    
 
 
 

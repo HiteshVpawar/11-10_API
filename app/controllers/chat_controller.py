@@ -45,6 +45,21 @@ class ChatController:
         chat_id = mongo_db.chats.insert_one(mongo_payload).inserted_id
         return mongo_payload
     
+    # def get_chats(self, user_id):
+    #     chats = mongo_db.chats.find({'user_id': user_id}, {})
+    #     chat_list = []
+    #     for x in chats:
+    #         chat_list.append({
+    #             '_id': str(x['_id']),
+    #             'question': x['question'],
+    #             'answer': x['answer'],
+    #             'time': x['time']
+    #         })
+    #     response_data = {
+    #         'data': chat_list
+    #     }
+    #     return response_data, 200
+
     def get_chats(self, user_id):
         chats = mongo_db.chats.find({'user_id': user_id}, {})
         chat_list = []
@@ -55,10 +70,14 @@ class ChatController:
                 'answer': x['answer'],
                 'time': x['time']
             })
-        response_data = {
-            'data': chat_list
-        }
-        return response_data, 200
+
+        if chat_list: 
+            response_data = {
+                'data': chat_list
+            }
+            return response_data, 200
+        else:
+            return {'message': 'Data not found'}, 404
     
 
     

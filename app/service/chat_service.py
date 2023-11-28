@@ -26,11 +26,11 @@ import multiprocessing
 
 def chat_service(user_id, question):
     openai.api_base = "http://localhost:12345/v1"
-    openai.api_key = ""  # Replace with your actual API key
+    openai.api_key = "" 
 
     messages = [
         {"role": "system", "content": "Always answer in rhymes."},
-        {"role": "user", "content": f"{user_id}: {question}"}  # Include user ID in the message
+        {"role": "user", "content": f"{user_id}: {question}"}  
     ]
 
     completion = openai.ChatCompletion.create(
